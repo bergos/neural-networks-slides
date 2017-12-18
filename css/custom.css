@@ -1,0 +1,18 @@
+div.slides {
+    width: 90% !important;
+}
+
+div.compare {
+    display: inline-table;
+}
+
+div.compare > div {
+    display: table-cell;
+	vertical-align: middle;
+	width: 50%;
+	padding-right: 1%;
+}
+
+small.quote {
+	display: block;
+}

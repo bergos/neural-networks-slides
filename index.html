@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Neuronale Netze und wie man damit nicht nur Probleme aus der Biochemie löst</title>
+
+  <meta name="description" content="Neuronale Netze und wie man damit nicht nur Probleme aus der Biochemie löst">
+  <meta name="author" content="Thomas Bergwinkl">
+
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+  <link rel="stylesheet" href="node_modules/reveal.js/css/reveal.css">
+  <link rel="stylesheet" href="css/theme/zazuko.css" id="theme">
+  <link rel="stylesheet" href="css/custom.css">
+
+  <!-- Code syntax highlighting -->
+  <link rel="stylesheet" href="node_modules/reveal.js/lib/css/zenburn.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <!-- Agenda -->
+      <section>
+        <section>
+          <h1>Neuronale Netze</h1>
+          <h2>und wie man damit nicht nur Probleme aus der Biochemie löst</h2>
+          <p>
+            Thomas Bergwinkl
+            <a href="https://twitter.com/bergi_bergos">@bergi_bergos</a>
+          </p>
+          <small>
+            <a href="http://www.zazuko.com/">
+              <img src="images/zazuko-logo.png" style="border: none; box-shadow: none;"><br>
+            </a>
+            CTO@<a href="http://www.zazuko.com">Zazuko</a><br>
+          </small>
+        </section>
+
+        <section>
+          <h2>Agenda</h2>
+          <ul>
+            <li>Grundlagen & Frameworks</li>
+            <li>In der Praxis</li>
+            <li>Lessons Learned & Ausblick</li>
+          </ul>
+        </section>
+      </section>
+
+
+      <!-- Grundlagen -->
+      <section>
+        <section>
+          <h1>Neuronale Netze - Grundlagen</h1>
+        </section>
+
+        <!-- Wie funktionieren Neuronale Netze? -->
+        <section>
+          <h2>Wie funktionieren Neuronale Netze?</h2>
+        </section>
+
+        <section>
+          <h3>Neuron</h3>
+          <div class="compare">
+            <div>
+              <ul>
+                <li>Input - Wert am Eingang des Netzes oder Verbindung(en) zu anderen Neuronen</li>
+                <li>Threshold/Bias - Wird zum Input addiert</li>
+                <li>Activation Function - Gibt den Output auf Basis Input + Bias zurück</li>
+              </ul>
+
+            </div>
+            <div>
+              <img src="images/ArtificialNeuronModel_english_neuron.png" style="width: 50%">
+            </div>
+          </div>
+          <small class="quote">
+            Quelle:
+            <a href="https://commons.wikimedia.org/wiki/File:ArtificialNeuronModel_english.png">Wikimedia</a>
+          </small>
+        </section>
+
+        <section>
+          <h3>Activation Function</h3>
+          <div class="compare">
+            <div>
+              <ul>
+                <li>Sigmoid</li>
+                <li>ReLU</li>
+                <li>Softmax</li>
+                <li>...</li>
+              </ul>
+            </div>
+            <div>
+              <img src="images/SigmoidFunction.png" style="width: 45%;">
+              <img src="images/Relu.jpeg" style="width: 45%;">
+            </div>
+          </div>
+          <small class="quote">
+            Quellen:
+            <a href="https://commons.wikimedia.org/wiki/File:SigmoidFunction.png">Wikimedia</a>,
+            <a href="https://leonardoaraujosantos.gitbooks.io/artificial-inteligence/content/relu_layer.html">Artificial Inteligence</a>
+          </small>
+        </section>
+
+        <section>
+          <h3>Connections</h3>
+          <div class="compare">
+            <div>
+              <img src="images/ArtificialNeuronModel_english_connections.png" style="width: 50%">
+            </div>
+            <div>
+              <ul>
+                <li>Weights - Wird mit dem Input (Output des vorherigen Neurons) multipliziert</li>
+                <li>Transfer Function - Summe aller Input * Weights</li>
+              </ul>
+            </div>
+          </div>
+          <small class="quote">
+            Quelle:
+            <a href="https://commons.wikimedia.org/wiki/File:ArtificialNeuronModel_english.png">Wikimedia</a>
+          </small>
+        </section>
+
+        <section>
+          <h3>Netzwerk Typen</h3>
+          <div class="compare">
+            <div>
+              <img src="http://neuralnetworksanddeeplearning.com/images/tikz41.png">
+              <p>Fully Connected</p>
+            </div>
+            <div>
+              <img src="http://neuralnetworksanddeeplearning.com/images/tikz43.png">
+              <p>Convolutional Neural Network (CNN)</p>
+            </div>
+            <div>
+              <img src="https://upload.wikimedia.org/wikipedia/commons/d/dd/RecurrentLayerNeuralNetwork.png">
+              <p>Recurrent Neural Network (RNN, LSTM)</p>
+            </div>
+          </div>
+          <small class="quote">
+            Quellen:
+            <a href="http://neuralnetworksanddeeplearning.com/chap6.html">Neural Networks and Deep Learning</a>,
+            <a href="https://commons.wikimedia.org/wiki/File:RecurrentLayerNeuralNetwork.png">Wikimedia</a>
+          </small>
+        </section>
+
+        <!-- Training/Learning -->
+        <section>
+          <h2>Training/Learning</h2>
+        </section>
+
+        <section>
+          <h3>Ablauf</h3>
+          <ol>
+            <li>Das Netzwerk wird mit Input Daten gefüttert und durchlaufen</li>
+            <li>Der Output wird mit dem erwartetem Output verglichen</li>
+            <li>Weights und Bias werden mit Hilfe von Backpropagation angepasst</li>
+          </ol>
+          <p>Die Backpropagation kann in Batches durchgeführt werden</p>
+          <p>In gewissen Intervallen wird ein Test / eine Validation durchgeführt</p>
+        </section>
+
+        <section>
+          <h3>Typen</h3>
+
+          <h4>Supervised learning</h4>
+          <p>Vordefiniertes Dataset an Paaren von Input/Output.</p>
+
+          <h4>Unsupervised learning</h4>
+          <p>Vordefiniertes Dataset für den Input aber der Output wird nur durch eine Cost Function beschrieben</p>
+
+          <h4>Reinforcement learning</h4>
+          <p>Das Neuronale Netz kann bestimmte Aktionen ausführen und bekommt dafür positive oder negative Belohnungen</p>
+        </section>
+
+        <!-- Software -->
+        <section>
+          <h2>Software</h2>
+          <div class="compare">
+            <div>
+              <h4><a href="https://keras.io/">Keras</a></h4>
+              <ul>
+                <li>High Level API für TensorFlow, CNTK, ...</li>
+                <li>Wenig Zeilen Code notwendig</li>
+                <li>von Google</li>
+                <li>Bestandteil von TensorFlow</li>
+              </ul>
+
+              <br><br>
+              <h4><a href="https://www.tensorflow.org/">Tensorflow</a></h4>
+              <ul>
+                <li>von Google</li>
+                <li>Mobile Device bis GPU Cluster</li>
+              </ul>
+
+              <br><br>
+              <h4><a href="https://www.microsoft.com/en-us/cognitive-toolkit/">Microsoft Cognitive Toolkit (aka CNTK)</a></h4>
+              <ul>
+                <li>von Microsoft</li>
+              </ul>
+            </div>
+            <div>
+              <h4><a href="https://mxnet.incubator.apache.org/">MXNet</a></h4>
+              <ul>
+                <li>Apache Projekt</li>
+                <li>Framework der Wahl von Amazon</li>
+                <li>Mobile Device bis GPU Cluster</li>
+              </ul>
+
+              <br><br>
+              <h4><a href="https://caffe2.ai/">Caffe2</a></h4>
+              <ul>
+                <li>von Facebook</li>
+                <li>Mobile Device bis GPU Cluster</li>
+              </ul>
+
+              <br><br>
+              <h4><a href="https://deeplearnjs.org/">Deeplearnjs</a></h4>
+              <ul>
+                <li>Browser</li>
+                <li>GPU Support</li>
+                <li>Training läuft auch im Browser</li>
+                <li>von Google</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section>
+          <h2>Use Cases</h2>
+        </section>
+
+        <section>
+          <h3>Image classification</h3>
+          <p>Kategorisieren von Bilder</p>
+          <img src="images/notdogfull.jpg" style="width: 33%;">
+
+          <small class="quote">
+            Quelle:
+            <a href="https://consumerist.com/2017/05/15/you-can-really-download-the-not-hotdog-app-from-silicon-valley/">You Can Really Download The Not HotDog App From ‘Silicon Valley’</a>
+          </small>
+        </section>
+
+        <section>
+          <h3>Text-to-Speech (TTS)</h3>
+          <div class="compare">
+            <div>
+              <img src="images/Stephen_Hawking.StarChild.jpg">
+            </div>
+            <div>
+              <img src="images/wavenet_conv_gif.gif">
+            </div>
+          </div>
+
+          <small class="quote">
+            Quelle:
+            <a href="https://deepmind.com/blog/high-fidelity-speech-synthesis-wavenet/">Deepmind</a>,
+            <a href="https://en.wikipedia.org/wiki/File:Stephen_Hawking.StarChild.jpg">Wikipedia</a>
+          </small>
+        </section>
+
+        <section>
+          <h3>3D Object Generation</h3>
+          <img src="images/1_vEZE5VcjUr5RUbt_OWfR_w.gif">
+
+          <small class="quote">
+            Quelle:
+            <a href="https://medium.com/@juliendespois/latent-space-visualization-deep-learning-bits-2-bd09a46920df">Medium</a>
+          </small>
+        </section>
+      </section>
+
+
+      <!-- In der Praxis - Protein Ligand Binding -->
+      <section>
+        <section>
+          <h1>In der Praxis - Protein Ligand Binding</h1>
+        </section>
+
+        <section>
+          <h2>Wieso möchte man wissen an welches Protein sich ein Molekül sich bindet?</h2>
+          <p>
+            Je nach Use Case soll ein Molekül an bestimmte Proteine binden und andere Bindungen meiden.
+          </p>
+
+          <h3>Beispiel - Opioidrezeptoren</h3>
+          <table>
+            <thead>
+            <tr><th>Typ</th><th>Lokalisation</th><th>Wirkung</th></tr>
+            </thead>
+            <tbody>
+            <tr><td>μ1 und μ2</td><td>Gehirn</td><td>Analgesie, Herz-Kreislauf-Wirkungen</td></tr>
+            <tr><td>μ2 (MOR bzw. OP3)</td><td>spinal, supraspinal</td><td>Analgesie, Atemdepression, Euphorie, Magen-Darm-Wirkung, Sucht</td></tr>
+            <tr><td>μ</td><td>peripher</td><td>Analgesie, Magen-Darm-Wirkung, Juckreiz</td></tr>
+            <tr><td>κ (Kappa) (KOR bzw. OP2)</td><td>Gehirn, spinal</td><td>Analgesie, Sedierung, Dysphorie</td></tr>
+            <tr><td>δ (Delta) (DOR bzw. OP1)</td><td>Gehirn, spinal, peripher</td><td>Magen-Darm-Wirkung, modulierende Wirkung</td></tr>
+            </tbody>
+          </table>
+
+          <small>
+            Quelle: <a href="https://de.wikipedia.org/wiki/Opioide#Rezeptoren">Wikipedia</a>
+          </small>
+        </section>
+
+        <section>
+          <h2></h2>
+
+          <div class="compare">
+            <div>
+              <h3>vereinfacht</h3>
+              <img src="images/binding-simple.svg">
+            </div>
+            <div class="fragment">
+              <h3>tatsächlich</h3>
+              <div class="compare">
+                <div>
+                  <img src="images/5ht2a.jpg">
+                </div>
+                <div>
+                  <img src="images/DOI3Dan.gif">
+                </div>
+              </div>
+            </div>
+          </div>
+          <small>
+            Quellen:
+            <a href="https://en.wikipedia.org/wiki/File:5ht2a.jpg">5ht2a</a>,
+            <a href="https://en.wikipedia.org/wiki/File:DOI3Dan.gif">DOI</a>
+          </small>
+        </section>
+
+        <!-- Idee -->
+        <section>
+          <h2>Idee</h2>
+          <ul>
+            <li>Die Information der Bindungsaffinität vieler Moleküle zu einem Protein beschreibt das Protein selbst</li>
+            <li>Wird ein Neuronales Netz mit diesen Informationen gefüttert, beschreibt das Neuronale Netz das Protein</li>
+            <li>So lässt sich sich die Bindungsaffinität für bisher unbekannte Moleküle prognostizieren</li>
+          </ul>
+        </section>
+
+        <!-- Umsetzung -->
+        <section>
+          <h2>Umsetzung</h2>
+        </section>
+
+        <section>
+          <h3>Architektur/Topologie des Modells</h3>
+          <div class="compare">
+            <div>
+              <h4>Protein Binding</h4>
+              <i>Wie bekommt man die Graph Struktur eines Moleküls in ein Neuronales Netz?</i>
+              <p>SMILES ist ein chemischer Strukturcode welcher sich mit ASCII darstellen lässt:</p>
+              <code>COc1cc(CCN)c(OC)cc1Br</code>
+              <p>Der SMILES String wird in Tokens aufgeteilt:</p>
+              <code>C˽O˽c˽1˽c˽c˽(˽C˽C˽N˽)˽c˽(˽O˽C˽)˽c˽c˽1˽Br</code>
+              <p>Für jeden möglichen Token gibt es einen Input:</p>
+              <small>
+                <table>
+                  <thead>
+                  <tr><th>C</th><th>0</th><th>c</th><th>1</th><th>(</th><th>)</th><th>N</th><th>Br</th></tr>
+                  </thead>
+                  <tbody>
+                  <tr><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                  <tr><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                  <tr><td colspan="8">...</td></tr>
+                  <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+                  </tbody>
+                </table>
+              </small>
+              <p>Ein LSTM Netzwerk verarbeitet den Input und gibt über einen Output die Wahrscheinlichkeit zurück</p>
+            </div>
+            <div class="fragment">
+              <h4>allgemein</h4>
+              <ul>
+                <li>
+                  Daten müssen in Dimensionen geordnet werden mit vorher definierten Größen
+                  (z.B. Bilder in Width*Height*Color Channels)
+                </li>
+                <li>CNN sollten für räumliche Daten verwendet werden</li>
+                <li>RNN und LSTM können für räumliche Daten mit variablen längen verwendet werden, sind jedoch aufwändiger zu trainieren</li>
+                <li>Ähnliche Use Cases oder Input/Output Datenstrukturen als Vorlage verwenden</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h3>Datenquellen</h3>
+          <div class="compare">
+            <div>
+              <h4>Protein Binding</h4>
+              <ul>
+                <li><a href="https://www.ebi.ac.uk/chembl/">ChEMBL</a> hat einen SPARQL Endpoint, enthält aber zu wenig Datensätze (insbesondere Not-Binding)</li>
+                <li>Das CSV der <a href="http://kidbdev.med.unc.edu/databases/kidb.php">PDSB Ki database</a> enthält mehr Daten, muss aber erst konvertiert werden</li>
+                <li>Das CSV der <a href="https://www.bindingdb.org/">BindingDB</a> ist deutlich umfangreicher, jedoch aufwändiger zu bereinigen</li>
+              </ul>
+              <p>Die Daten der BindingDB wurden verwendet, da ansonsten die Daten für das Training nicht gereicht hätten.</p>
+            </div>
+            <div class="fragment">
+              <h4>allgemein</h4>
+              <ul>
+                <li>Mehr Daten sind immer besser</li>
+                <li>Mindestens 10% eurer Datensätze werden für das Test/Validation Set benötigt</li>
+                <li>Evtl. müssen Rohdaten herangezogen werden</li>
+                <li>Konvertierung in ein benutzerfreundliches Format von Vorteil</li>
+                <li>Ihr werdet die Daten nicht nur einmal anfassen...</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h3>Preprocessing</h3>
+          <p>
+            Um das Neuronale Netz mit Daten zu füttern müssen die Daten fast immer umstrukturiert und umgewandelt werden.
+          </p>
+          <div class="compare">
+            <div>
+              <h4>Protein Binding</h4>
+              <p>Es wurden Tools in JavaScript entwicklet um:</p>
+              <ul>
+                <li>die Datensätze zu filtern und sortieren</li>
+                <li>Statistiken zu generieren (Anzahl Datensätze, Verteilung)</li>
+                <li>alternative Darstellungen zu generieren</li>
+                <li>die Datensätze "Neural Network Ready" zu mappen</li>
+              </ul>
+              <img src="images/info-histogram.png">
+            </div>
+            <div class="fragment">
+              <h4>allgemein</h4>
+              <p>
+                Sollten Tools bereitstehen um die Daten einfach zu filtern, sortieren, transformieren und zu analysieren.
+                Für den Browser gibt es z.B. <a href="https://pair-code.github.io/facets/">Facets</a> von Google.
+
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h3>Data Augmentation</h3>
+          <p>
+            Unter Data Augmentation versteht man das automatische anpassen der Datensätze um weitere Datensätze für das Training zu generieren.
+          </p>
+          <div class="compare">
+            <div>
+              <h4>Protein Binding</h4>
+              <p>
+                Verschiedene Wege der Traversierung eines Moleküls ergeben unterschiedliche SMILES Darstellungen.
+              </p>
+            </div>
+            <div class="fragment">
+              <h4>allgemein</h4>
+              <ul>
+                <li>Nützliches Tool um mehr Daten/Varianten zu generieren.</li>
+                <li>Es sollte darauf geachtet werden, dass am Ende noch Daten vorhanden sind.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h3>Training</h3>
+          <div class="compare">
+            <div>
+              <h4>Protein Binding</h4>
+              <ul>
+                <li>verschiedene Parameter für Dataset und Modell wurden getestet</li>
+                <li>Keras Gaia - Ein Tool für Keras verarbeitet diese Sets von Parametern als Projekt</li>
+                <li>Input und Output von Keras sind NumPy Arrays</li>
+                <li>Eine Abstraktion über Namespaces erlaubt das einfach tauschen von Dataset und Modell</li>
+                <li>Mehere Projekte wurden definiert, Datasets generiert und liefen dann als Jobs über meherere Tage</li>
+              </ul>
+            </div>
+            <div class="fragment">
+              <h4>allgemein</h4>
+              <ul>
+                <li>Trial and Error - Es werden einige Sets an Parametern durchprobiert werden müssen</li>
+                <li>Die Modelle müssen angepasst werden</li>
+                <li>Training Jobs dauern lange (oft Tage)</li>
+                <li>Mit kleinen Datasets und Modellen starten um in kurzen Intervallen die Ergebnisse prüfen zu können</li>
+                <li>Von Google gibt es <a href="https://github.com/tensorflow/tensor2tensor">Tensor2Tensor</a> welches diesen Prozess unterstützen kann</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h3>Heureka!</h3>
+          <div class="compare">
+            <div>
+              <h4>Protein Binding</h4>
+
+              <div style="width: 600px; overflow-x: scroll;">
+                <div id="container" style="width: 4000px; height: 500px;"></div>
+              </div>
+
+              <script src="js/highcharts.js"></script>
+              <script src="js/highcharts-more.js"></script>
+              <script src="js/highcharts-theme.js"></script>
+              <script src="js/ligand-binding-deep-learning-5ht2a75.js"></script>
+            </div>
+            <div class="fragment">
+              <h4>allgemein</h4>
+              <ul>
+                <li>
+                  Es funktioniert nicht immer:
+                  <ul>
+                    <li>Datenqualität zu schlecht -> Aufräumen</li>
+                    <li>Problem zu komplex -> auf schnellere GPUs warten</li>
+                  </ul>
+                </li>
+                <li>Das Modell und die Weights des besten Trainings können über die meisten Frameworks als Funktion bereitgestellt werden.</li>
+                <li>Wrapper für die Funktion bauen, da die Datenstrukturen für das Neuronale Netz oft angepasst werden müssen (Microservice)</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+      </section>
+
+
+      <!-- Ausblick -->
+      <section>
+        <section>
+          <h1>Lessons Learned & Ausblick</h1>
+        </section>
+
+        <section>
+          <h2>Lessons Learned</h2>
+          <ul>
+            <li>Publish your failures!</li>
+            <li class="fragment">Neuronale Netze sind in einige Domänen Greenfield Projects</li>
+            <li class="fragment">In der akademischen Welt sind Erkenntnise jenseits von Papers nicht existent</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Ausblick - Biochemie</h2>
+          <div class="compare">
+            <div>
+              <a href="https://metafluidics.org/">Metafluidics</a> - Community im Stil von Thingiverse
+              <br>
+              <img src="images/300_final-800x600.jpg" style="width: 45%;">
+              <img src="images/Fig1-800x600.png" style="width: 45%;">
+            </div>
+            <div>
+              <a href="http://www.the-odin.com/diy-crispr-kit/">DIY Bacterial Gene Engineering CRISPR Kit</a> - Das Genschere Bastelset für Zuhause (Import nach Deutschland ist verboten!)
+              <img src="images/SXSWAdEdit__30029.1487704062.1280.1280.jpg" style="width: 80%;">
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2>Ausblick - Software</h2>
+
+          <h3>Tools für die Abstraktion der Daten und das Modell</h3>
+          <ul>
+            <li><a href="https://github.com/tensorflow/tensor2tensor">Tensor2Tensor</a></li>
+            <li><a href="https://github.com/zazuko/keras_gaia">Keras Gaia</a></li>
+          </ul>
+
+          <br><br>
+          <h3>UIs</h3>
+          <ul>
+            <li>Für die Erstellung der Modelle</li>
+            <li>Zum definieren der Training Jobs</li>
+          </ul>
+
+          <br><br>
+          <h3>Automatisch generierte Netzwerk Architekturen</h3>
+          <ul>
+            <li><a href="https://arxiv.org/abs/1703.01041">Large-Scale Evolution of Image Classifiers</a></li>
+            <li><a href="https://arxiv.org/abs/1611.01578">Neural Architecture Search with Reinforcement Learning</a></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Ausblick - Hardware</h2>
+          <ul>
+            <li><a href="https://en.wikipedia.org/wiki/Tensor_processing_unit">Tensor Processing Unit</a></li>
+            <li>und in fast jedem anderem Chipset</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Ausblick - Use Cases</h2>
+          <ul>
+            <li class="fragment">Autonomes Fahren</li>
+            <li class="fragment">Verteilte Neuronale Netze (IPFS, Internet of Things, ...)</li>
+            <li class="fragment">Neuronale Netze erstellen Programme</li>
+            <li class="fragment">und in jedem anderen denkbarem Bereich</li>
+          </ul>
+        </section>
+      </section>
+
+
+      <!-- Fragen -->
+      <section>
+        <section>
+          <h1>Noch Fragen?</h1>
+        </section>
+      </section>
+
+
+
+      <!-- Links -->
+      <section>
+        <section>
+          <h1>Links</h1>
+          <ul>
+            <li><a href="https://www.bergnet.org/2017/02/ligand-binding-deep-learning/">Ligand binding affinity prediction using deep learning</a>
+              - Blog Post zum Projekt</li>
+            <li><a href="http://neuralnetworksanddeeplearning.com/">Neural Networks and Deep Learning</a>
+              - online Book von <a href="http://michaelnielsen.org/">Michael Nielsen</a></li>
+            <li><a href="https://en.wikibooks.org/wiki/Artificial_Neural_Networks">Artificial Neural Networks</a>
+              - Wikibook</li>
+          </ul>
+        </section>
+      </section>
+    </div>
+  </div>
+
+  <script src="node_modules/reveal.js/lib/js/head.min.js"></script>
+  <script src="node_modules/reveal.js/js/reveal.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
